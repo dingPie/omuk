@@ -1,19 +1,28 @@
 const textStyles = {
+  sx: {
+    fontSize: ['12px'],
+  },
   sm: {
-    fontSize: ['12px', '10px', '12px'],
-    lineHeight: ['18px', '16px', '18px'],
+    fontSize: ['14px'],
+    lineHeight: ['18px'],
   },
   md: {
-    fontSize: { base: '16px', sm: '14px', md: '15px' },
-    lineHeight: ['28px', '26px', '27px'],
+    fontSize: { base: '16px' },
+    lineHeight: ['28px'],
   },
   lg: {
-    fontSize: ['20px', '20px', '26px'],
-    lineHeight: ['29px', '29px', '42px'],
+    fontSize: ['20px'],
+    lineHeight: ['29px'],
   },
   xl: {
-    fontSize: ['26px', '26px', '35px'],
-    lineHeight: ['38px', '38px', '52px'],
+    fontSize: ['26px'],
+    lineHeight: ['38px'],
+    fontWeight: ['bold'],
+  },
+  title: {
+    fontSize: ['28px', '32px'],
+    lineHeight: ['38px'],
+    fontWeight: ['bold'],
   },
 };
 

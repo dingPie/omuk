@@ -25,7 +25,7 @@ const SummaryCard = ({
       _hover={{ boxShadow: 'xl', translateY: '-10px', transform: 'auto' }}
       {...basisProps}
     >
-      <Text textStyle="lg">{title}</Text>
+      <Text textStyle="sm">{title}</Text>
       <Text textStyle="md" color="gray.600">
         {description}
       </Text>

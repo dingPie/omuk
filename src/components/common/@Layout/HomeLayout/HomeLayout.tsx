@@ -23,7 +23,12 @@ const HomeLayout = ({
   return (
     <>
       {header}
-      <Container pt={LAYOUT.HEADER.HEIGHT} {...containerProps}>
+      <Container
+        pt={LAYOUT.HEADER.HEIGHT}
+        maxW="1200px"
+        bgColor={'gray.100'}
+        {...containerProps}
+      >
         {content}
       </Container>
       {footer}

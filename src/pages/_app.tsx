@@ -1,9 +1,6 @@
-import {
-  ThemeProvider,
-  useBreakpoint,
-  useColorMode,
-  useTheme,
-} from '@chakra-ui/react';
+import { AppProps } from 'next/app';
+
+import { ThemeProvider, useColorMode, useTheme } from '@chakra-ui/react';
 
 import ToggleColorModeButton from '@components/common/ToggleColorModeButton';
 import TokDocsDevTools from '@components/common/TokDocsDevTool';
@@ -14,21 +11,18 @@ import { mode } from '@theme/foundations/colors';
 import withAppProvider from 'contexts/app/app.provider';
 import { withGlobalModalHandlerContext } from 'contexts/modal/useGlobalModalHandler.context';
 
-function MyApp({ Component, pageProps }: any) {
+function MyApp({ Component, pageProps }: AppProps) {
   const theme = useTheme();
   const { colorMode } = useColorMode();
-  const br = useBreakpoint();
-  console.log({ br });
 
   return (
     // Provide the client to your App
     <ThemeProvider
       theme={{ ...theme, colors: { ...theme.colors, ...mode[colorMode] } }}
     >
-      <ToggleColorModeButton />
       <Component {...pageProps} />
-      <ReactQueryDevtools initialIsOpen={false} />
-      <TokDocsDevTools />
+
+      {/* <TokDocsDevTools /> */}
     </ThemeProvider>
   );
 }

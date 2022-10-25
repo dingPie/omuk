@@ -6,7 +6,8 @@ const styles = {
     body: {
       fontFamily: 'body',
       color: mode('#1A1A1A', '#FFFFFF')(props),
-      bg: mode('#FFFFFF', '#363636')(props),
+      // bg: mode('#FFFFFF', '#363636')(props),
+      bg: 'gray.100',
     },
     input: {
       fontSize: ['16px', '14px', '15px'],
