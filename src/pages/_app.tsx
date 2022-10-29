@@ -1,4 +1,6 @@
 import { AppProps } from 'next/app';
+import Head from 'next/head';
+import Script from 'next/script';
 
 import { ThemeProvider, useColorMode, useTheme } from '@chakra-ui/react';
 
@@ -17,6 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     // Provide the client to your App
+
     <ThemeProvider
       theme={{ ...theme, colors: { ...theme.colors, ...mode[colorMode] } }}
     >

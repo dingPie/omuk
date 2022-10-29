@@ -48,7 +48,7 @@ const SelectRadius = () => {
         bgColor="white"
       >
         <Text w="100%" textAlign={'center'} fontWeight="700">
-          내 위치부터 반경
+          내 주위
         </Text>
         <Select
           w="100%"

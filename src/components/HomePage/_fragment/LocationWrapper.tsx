@@ -19,6 +19,7 @@ const LocationWrapper = () => {
           icon={<LocationDotIcon boxSize={'24px'} />}
         />
       </Show>
+
       <Show above="sm">
         <Button gap="12px" colorScheme={'whiteAlpha'}>
           <LocationDotIcon boxSize={'24px'} />

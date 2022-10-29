@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Script from 'next/script';
 import React from 'react';
 
 import HomePage from '@components/HomePage';
@@ -8,8 +9,11 @@ function Home() {
   return (
     <>
       <Head>
-        {/* ex) Your App Name | Page Name */}
-        <title>똑똑한 개발자 | 메인</title>
+        <title>OMUK | 오늘 뭐먹지?</title>
+        <script
+          type="text/javascript"
+          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b4ac60bbe108db273adf13235b862d61&libraries=services,clusterer,drawing"
+        ></script>
       </Head>
       <HomeLayout content={<HomePage />} />
     </>
