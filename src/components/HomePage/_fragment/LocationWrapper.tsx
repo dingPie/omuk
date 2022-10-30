@@ -1,9 +1,15 @@
+import { ChangeEvent } from 'react';
+
 import { Button, Flex, IconButton, Input, Show, Text } from '@chakra-ui/react';
 
 import LocationDotIcon from '@components/common/@Icons/System/LocationDot';
 import SquarePlusIcon from '@components/common/@Icons/System/SquarePlus';
 
-const LocationWrapper = () => {
+const LocationWrapper = ({
+  onChangeAddressInput,
+}: {
+  onChangeAddressInput: (e: ChangeEvent<HTMLInputElement>) => void;
+}) => {
   return (
     <Flex
       alignItems={'center'}
@@ -29,7 +35,7 @@ const LocationWrapper = () => {
         </Button>
       </Show>
 
-      <Input variant="unstyled" p="1rem" />
+      <Input onChange={onChangeAddressInput} variant="unstyled" p="1rem" />
       <IconButton
         aria-label={'button'}
         icon={<SquarePlusIcon boxSize={'24px'} textAlign="center" />}

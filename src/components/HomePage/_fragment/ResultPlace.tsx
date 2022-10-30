@@ -1,6 +1,10 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 
-const ResultPlace = () => {
+interface ResultPlaceProps {
+  resultPlace?: LocationDataType[];
+}
+
+const ResultPlace = ({ resultPlace }: ResultPlaceProps) => {
   return (
     <Flex flexDir={'column'} gap="1rem" marginY="1rem">
       <Text marginX={'12px'} textStyle={'xl'} fontWeight="bold" w="100%">
@@ -10,30 +14,46 @@ const ResultPlace = () => {
         flexDir={{ base: 'column', sm: 'row' }}
         gap={{ base: '12px' }}
         justifyContent="center"
-        alignItems={'center'}
+        // alignItems={'center'}
       >
+        {resultPlace &&
+          resultPlace.map((data) => <PlaceItem key={data.id} data={data} />)}
+        {/* <PlaceItem />
         <PlaceItem />
-        <PlaceItem />
-        <PlaceItem />
+        <PlaceItem /> */}
       </Flex>
     </Flex>
   );
 };
 export default ResultPlace;
 
-const PlaceItem = () => {
+interface PlaceItemProps {
+  data: LocationDataType;
+}
+
+const PlaceItem = ({ data }: PlaceItemProps) => {
   return (
     <Flex w="100%" boxShadow="md" rounded={'base'} p="12px" bgColor={'white'}>
       <Flex flexDir={'column'} w="100%">
-        <Text textStyle={'lg'} fontWeight="bold">
-          샹그릴라
-        </Text>
-        <Text textStyle={'md'}>중식</Text>
-        <Text textStyle={'sm'}>02-2222-3333</Text>
-        <Flex gap={'12px'} alignItems="center">
-          <Text textStyle={'sm'}>11:30 ~ 21:00</Text>
-          <Text>영업중</Text>
+        <Flex
+          gap={'12px'}
+          p="4px"
+          mb="8px"
+          borderBottom={'1px lightgray solid'}
+          // alignItems="center"
+          justifyContent={'space-between'}
+        >
+          <Text textStyle={'lg'} fontWeight="bold">
+            {data.place_name}
+          </Text>
+          {/* <Text textStyle={'md'} whiteSpace="nowrap" fontWeight={'700'}>
+            {data.category_name}
+          </Text> */}
         </Flex>
+
+        <Text textStyle={'sm'}>{data.phone}</Text>
+        <Text textStyle={'sm'}>{data.address_name}</Text>
+        <Text textStyle={'sm'}>{data.distance} m</Text>
       </Flex>
       <Box
         w="100%"

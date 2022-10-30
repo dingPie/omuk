@@ -1,3 +1,5 @@
+import { ChangeEvent } from 'react';
+
 import {
   Accordion,
   AccordionButton,
@@ -10,7 +12,16 @@ import {
 import CategoryButtons from './CategoryButtons';
 import SelectRadius from './SelectRadius';
 
-const OptionComponent = () => {
+interface OptionComponentProps {
+  onChangeMapRadius: (e: ChangeEvent<HTMLSelectElement>) => void;
+  categoryList: { name: string; state: boolean }[];
+  onClickCategoryBtn: (name: string) => void;
+}
+const OptionComponent = ({
+  onChangeMapRadius,
+  categoryList,
+  onClickCategoryBtn,
+}: OptionComponentProps) => {
   return (
     <Accordion
       allowToggle
@@ -28,10 +39,13 @@ const OptionComponent = () => {
         </AccordionButton>
 
         <AccordionPanel>
-          <SelectRadius />
+          <SelectRadius onChangeMapRadius={onChangeMapRadius} />
         </AccordionPanel>
         <AccordionPanel>
-          <CategoryButtons />
+          <CategoryButtons
+            categoryList={categoryList}
+            onClickCategoryBtn={onClickCategoryBtn}
+          />
         </AccordionPanel>
       </AccordionItem>
     </Accordion>

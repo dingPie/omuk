@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
 import { Flex, Select, Text } from '@chakra-ui/react';
 
-const RADIUS_LIST = [0.5, 1, 2, 3];
+const RADIUS_LIST = [
+  { text: 0.3, value: 200 },
+  { text: 0.5, value: 500 },
+  { text: 1, value: 1000 },
+  { text: 1.5, value: 1500 },
+  { text: 2, value: 2000 },
+];
 
-const SelectRadius = () => {
-  const [radiusValue, setRadiusValue] = useState(0.5);
+interface SelectRadiusProps {
+  onChangeMapRadius: (e: ChangeEvent<HTMLSelectElement>) => void;
+}
+
+const SelectRadius = ({ onChangeMapRadius }: SelectRadiusProps) => {
+  // const [radiusValue, setRadiusValue] = useState(0.5);
   //   TODO: 추가한 즐겨찾기 목록 추가 useEffect
   const [myLocationList, setMyLocationList] = useState(['없음']);
 
@@ -24,8 +34,8 @@ const SelectRadius = () => {
         </Text>
         <Select
           w="100%"
-          value={radiusValue}
-          onChange={(e) => setRadiusValue(Number(e.target.value))}
+          // value={myLocationList}
+          // onChange={(e) => setMyLocationList(Number(e.target.value))}
           variant={'unstyled'}
           padding={'.5rem 1rem'}
           textAlign="center"
@@ -52,16 +62,15 @@ const SelectRadius = () => {
         </Text>
         <Select
           w="100%"
-          value={radiusValue}
-          onChange={(e) => setRadiusValue(Number(e.target.value))}
+          onChange={onChangeMapRadius}
           variant={'unstyled'}
           padding={'.5rem 1rem'}
           textAlign="center"
           fontWeight="700"
         >
           {RADIUS_LIST.map((radius) => (
-            <option key={radius} value={radius}>
-              {radius}
+            <option key={radius.value} value={radius.value}>
+              {radius.text}
             </option>
           ))}
         </Select>

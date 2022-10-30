@@ -6,7 +6,6 @@ const usePageResize = (ref: RefObject<HTMLElement>) => {
     if (!ref.current) return;
     const w = ref.current.clientWidth;
     setSize(w);
-    console.log(w);
   }, [ref]);
 
   useEffect(() => {
