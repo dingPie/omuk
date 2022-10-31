@@ -31,13 +31,10 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
     addressInput,
     mapRadius,
     categoryList,
+    setFindValue,
   });
 
   // 버튼 누르면 장소중 세개 표시
-
-  useEffect(() => {
-    console.log('스팟확인', spots);
-  }, [spots]);
 
   const onClickOmukBtn = () => {
     const test = getRandomItem(spots);
@@ -81,9 +78,16 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
         {/* 지도에 맞게 잘 펴지긴 하는데, 지도 구역을 잘 못받아오네 */}
 
         <Flex flexDir={'column'}>
-          <LocationWrapper onChangeAddressInput={onChangeAddressInput} />
+          <LocationWrapper
+            findValue={findValue}
+            onChangeAddressInput={onChangeAddressInput}
+          />
 
-          <Show below={'sm'}>
+          <CategoryButtons
+            categoryList={categoryList}
+            onClickCategoryBtn={onClickCategoryBtn}
+          />
+          {/* <Show below={'sm'}>
             <OptionComponent
               onChangeMapRadius={onChangeMapRadius}
               categoryList={categoryList}
@@ -96,7 +100,7 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
               categoryList={categoryList}
               onClickCategoryBtn={onClickCategoryBtn}
             />
-          </Show>
+          </Show> */}
         </Flex>
 
         <Flex

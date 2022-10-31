@@ -51,11 +51,15 @@ const PlaceItem = ({ data }: PlaceItemProps) => {
           </Text> */}
         </Flex>
 
-        <Text textStyle={'sm'}>{data.phone}</Text>
         <Text textStyle={'sm'}>{data.address_name}</Text>
-        <Text textStyle={'sm'}>{data.distance} m</Text>
+        <Flex gap="4px">
+          <Text textStyle={'sm'}>내 위치에서</Text>
+          <Text textStyle={'sm'}> {data.distance} m</Text>
+        </Flex>
+        <Text textStyle={'sm'}>{data.phone}</Text>
       </Flex>
-      <Box
+      {/* 이미지를 제공하지 않는단다..... */}
+      {/* <Box
         w="100%"
         maxW={'100px'}
         h="100px"
@@ -65,7 +69,7 @@ const PlaceItem = ({ data }: PlaceItemProps) => {
         alignSelf="center"
       >
         이미지
-      </Box>
+      </Box> */}
     </Flex>
   );
 };

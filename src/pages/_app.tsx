@@ -10,6 +10,8 @@ import TokDocsDevTools from '@components/common/TokDocsDevTool';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { mode } from '@theme/foundations/colors';
 
+import './overlay.css';
+
 import withAppProvider from 'contexts/app/app.provider';
 import { withGlobalModalHandlerContext } from 'contexts/modal/useGlobalModalHandler.context';
 

@@ -29,7 +29,7 @@ const CategoryButtons = ({
       borderRadius="8px"
     >
       <Text textStyle={'lg'} fontWeight="bold">
-        제외할 카테고리
+        카테고리
       </Text>
       <Flex overflowX="scroll" gap={'1rem'} p="1rem 0">
         {categoryList.map((category) => (
