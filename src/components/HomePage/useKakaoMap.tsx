@@ -16,6 +16,8 @@ interface UseKakaoMapProps {
   mapRadius: number;
   categoryList: { name: string; state: boolean }[];
   setFindValue: (address: string) => void;
+  onClose: () => void;
+  onOpen: () => void;
 }
 
 const zoomObject: { [radius: number]: number } = {
@@ -32,6 +34,8 @@ const useKakaoMap = ({
   mapRadius,
   categoryList,
   setFindValue,
+  onOpen,
+  onClose,
 }: UseKakaoMapProps) => {
   const [coord, setCoord] = useState<CoordType>({ lat: 0, lng: 0 }); // 주소를 좌표로 변환해야 함
 
@@ -42,30 +46,9 @@ const useKakaoMap = ({
   const infoRef = useRef<any>(null);
   const clustererRef = useRef<any>(null);
 
-  const reverseGeocode = () => {
-    const geocoder = new window.kakao.maps.services.Geocoder();
-    navigator.geolocation.getCurrentPosition((pos) => {
-      const longitude = pos.coords.longitude;
-      const latitude = pos.coords.latitude;
-      console.log('현재 위치는 : ' + latitude + ', ' + longitude);
-      geocoder.coord2Address(longitude, latitude, (data: any) => {
-        console.log(data[0].address.address_name);
-        setFindValue(data[0].address.address_name);
-      });
-    });
-  };
-
-  useEffect(() => {
-    // navigator.geolocation.getCurrentPosition((pos) => {
-    //   const latitude = pos.coords.latitude;
-    //   const longitude = pos.coords.longitude;
-    //   console.log('현재 위치는 : ' + latitude + ', ' + longitude);
-    // });
-    reverseGeocode();
-  }, []);
-
   // 각 Ref 지정
   useEffect(() => {
+    onOpen();
     const options = {
       center: new window.kakao.maps.LatLng(coord.lat, coord.lng), //지도의 중심좌표.
       level: 4,
@@ -104,6 +87,7 @@ const useKakaoMap = ({
         },
       ],
     });
+    onClose();
   }, [coord.lat, coord.lng, mapRadius, mapRef]);
 
   // 주소 입력으로 좌표검색
@@ -127,25 +111,28 @@ const useKakaoMap = ({
     )
       return;
     if (!addressInput) return;
+    // 기존 매장, 클러스터, 인포윈도우 클리어
     setSpots([]);
     clustererRef.current.clear();
+    infoRef.current.close();
+    onOpen();
     const timeout = setTimeout(() => {
       // 키워드 검색 완료 시 호출되는 콜백함수 입니다
       const placesSearchCB = (
-        data: LocationDataType[],
+        place: LocationDataType[],
         status: 'OK' | string,
         pagination: LocationPaginationType,
       ) => {
         if (status !== 'OK') return;
-        showMarker(data);
-        setSpots((prev) => getDeduplicationArray([...prev, ...data]));
+        showMarker(place);
+        setSpots((prev) => getDeduplicationArray([...prev, ...place]));
         pagination.nextPage();
         if (!pagination.hasNextPage) return;
       };
 
       // 마커 데이터를 보여주는 콜백함수입니다.
-      const showMarker = (data: LocationDataType[]) => {
-        data.forEach((location) => displayMarker(location));
+      const showMarker = (place: LocationDataType[]) => {
+        place.forEach((location) => displayMarker(location));
       };
 
       // 지도에 마커를 표시하는 함수입니다
@@ -156,29 +143,9 @@ const useKakaoMap = ({
         });
         clustererRef.current.addMarker(marker);
 
-        // 오버레이
-        // const overlay = new window.kakao.maps.CustomOverlay({
-        //   content: testContent,
-        //   map: kakaoMapRef.current,
-        //   position: marker.getPosition(),
-        // });
-
-        // window.kakao.maps.event.addListener(marker, 'click', function () {
-        //   overlay.setMap(kakaoMapRef.current);
-        // });
-        // overlay.setMap(null);
-        // function closeOverlay() {
-        //   overlay.setMap(null);
-        // }
-
-        window.kakao.maps.event.addListener(marker, 'click', () => {
-          infoRef.current.setContent(
-            '<div style="padding:5px;font-size:12px;">' +
-              place.place_name +
-              '</div>',
-          );
-          infoRef.current.open(kakaoMapRef.current, marker);
-        });
+        window.kakao.maps.event.addListener(marker, 'click', () =>
+          openInfoContent(place),
+        );
       };
 
       const searchOption = {
@@ -195,12 +162,24 @@ const useKakaoMap = ({
       categoryArr.forEach((category) => {
         placeRef.current.keywordSearch(category, placesSearchCB, searchOption);
       });
+      onClose();
     }, 200);
 
     return () => clearTimeout(timeout);
-  }, [coord, categoryList, mapRadius, mapRef]);
+  }, [coord, categoryList, mapRadius, mapRef, addressInput]);
 
-  return { spots };
+  const openInfoContent = (place: LocationDataType) => {
+    const marker = new window.kakao.maps.Marker({
+      map: kakaoMapRef.current,
+      position: new window.kakao.maps.LatLng(place.y, place.x),
+    });
+    clustererRef.current.addMarker(marker);
+
+    infoRef.current.setContent(infoContent(place));
+    infoRef.current.open(kakaoMapRef.current, marker);
+  };
+
+  return { spots, openInfoContent };
 };
 
 export default useKakaoMap;
@@ -212,7 +191,6 @@ const setMyLocation = (map: any, coord: CoordType) => {
   const imageSize = new window.kakao.maps.Size(40, 40); // 마커이미지의 크기입니다
   const imageOption = { offset: new window.kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
 
-  // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
   const markerImage = new window.kakao.maps.MarkerImage(
     imageSrc,
     imageSize,
@@ -220,11 +198,9 @@ const setMyLocation = (map: any, coord: CoordType) => {
   );
   const markerPosition = new window.kakao.maps.LatLng(coord.lat, coord.lng);
 
-  // 마커를 생성합니다
   const marker = new window.kakao.maps.Marker({
     position: markerPosition,
     image: markerImage, // 마커이미지 설정
-    // draggable: true,
     zIndex: 2,
     title: '내 위치',
   });
@@ -257,6 +233,12 @@ const getCoordByAddress = (
   );
 };
 
+const getDeduplicationArray = (arr: any[]) =>
+  arr.filter(
+    (arr, index, callback) =>
+      index === callback.findIndex((t) => t.id === arr.id),
+  );
+
 // 카테고리 필터
 const getFilteredSpots = (
   spots: LocationDataType[],
@@ -273,28 +255,20 @@ const getFilteredSpots = (
   return result;
 };
 
-const getDeduplicationArray = (arr: any[]) =>
-  arr.filter(
-    (arr, index, callback) =>
-      index === callback.findIndex((t) => t.id === arr.id),
-  );
-
-const testContent =
-  '<div class="wrap" style={{backgroundColor: "white"}}>' +
-  '    <div class="info">' +
-  '        <div class="title">' +
-  '            카카오 스페이스닷원' +
-  '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' +
-  '        </div>' +
-  '        <div class="body">' +
-  '            <div class="img">' +
-  '                <img src="https://cfile181.uf.daum.net/image/250649365602043421936D" width="73" height="70">' +
-  '           </div>' +
-  '            <div class="desc">' +
-  '                <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>' +
-  '                <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>' +
-  '                <div><a href="https://www.kakaocorp.com/main" target="_blank" class="link">홈페이지</a></div>' +
-  '            </div>' +
-  '        </div>' +
-  '    </div>' +
-  '</div>';
+const infoContent = (place: LocationDataType) =>
+  `    <div class="info" style="display:flex; flex-direction:column; width:100%; min-width: 300px; height:auto; padding:12px; margin: 0px; border-color:white; ">` +
+  `        <div style="display:flex; gap:12px; padding:4px; margin-bottom:4px; border-bottom:1px lightgray solid; justify-content:space-between;">` +
+  `           <p style="font-weight:700" class="fontLg" >` +
+  `            ${place.place_name}` +
+  `           </p>` +
+  `        </div>` +
+  `        <div class="body">` +
+  `            <div style="display:flex; flex-direction:column; gap:4px; ">` +
+  `                <p class="fontSm">${place.address_name}</p>` +
+  `                <p class="fontSm">내 위치에서 
+                  <span style="font-weight:700" > ${place.distance} m </span>
+                 </p>` +
+  `            </div>` +
+  `            <p class="fontSm">${place.phone}</p>` +
+  `        </div>` +
+  `    </div>`;

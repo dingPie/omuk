@@ -8,9 +8,11 @@ import SquarePlusIcon from '@components/common/@Icons/System/SquarePlus';
 const LocationWrapper = ({
   findValue,
   onChangeAddressInput,
+  getGeocodeToAddress,
 }: {
   findValue: string;
   onChangeAddressInput: (e: ChangeEvent<HTMLInputElement>) => void;
+  getGeocodeToAddress: () => void;
 }) => {
   return (
     <Flex
@@ -23,13 +25,18 @@ const LocationWrapper = ({
     >
       <Show below="sm">
         <IconButton
+          onClick={getGeocodeToAddress}
           aria-label={'button'}
           icon={<LocationDotIcon boxSize={'24px'} />}
         />
       </Show>
 
       <Show above="sm">
-        <Button gap="12px" colorScheme={'whiteAlpha'}>
+        <Button
+          onClick={getGeocodeToAddress}
+          gap="12px"
+          colorScheme={'whiteAlpha'}
+        >
           <LocationDotIcon boxSize={'24px'} />
           <Text textStyle={'md'} color="black">
             내 위치
