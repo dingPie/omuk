@@ -2,10 +2,10 @@ import { Box, Flex, Slide, SlideFade, Text } from '@chakra-ui/react';
 
 interface ResultPlaceProps {
   resultPlace?: LocationDataType[];
-  openInfoContent: (place: LocationDataType) => void;
+  onClickResult: (place: LocationDataType) => void;
 }
 
-const ResultPlace = ({ resultPlace, openInfoContent }: ResultPlaceProps) => {
+const ResultPlace = ({ resultPlace, onClickResult }: ResultPlaceProps) => {
   return (
     <Flex flexDir={'column'} gap="1rem" marginY="1rem">
       <Text marginX={'12px'} textStyle={'xl'} fontWeight="bold" w="100%">
@@ -20,7 +20,7 @@ const ResultPlace = ({ resultPlace, openInfoContent }: ResultPlaceProps) => {
         {resultPlace &&
           resultPlace.map((place, idx) => (
             <PlaceItem
-              openInfoContent={openInfoContent}
+              onClickResult={onClickResult}
               key={place.id}
               place={place}
               idx={idx}
@@ -38,10 +38,10 @@ export default ResultPlace;
 interface PlaceItemProps {
   place: LocationDataType;
   idx: number;
-  openInfoContent: (place: LocationDataType) => void;
+  onClickResult: (place: LocationDataType) => void;
 }
 
-const PlaceItem = ({ place, idx, openInfoContent }: PlaceItemProps) => {
+const PlaceItem = ({ place, idx, onClickResult }: PlaceItemProps) => {
   return (
     <SlideFade
       in={true}
@@ -52,13 +52,14 @@ const PlaceItem = ({ place, idx, openInfoContent }: PlaceItemProps) => {
       }}
     >
       <Flex
-        onClick={() => openInfoContent(place)}
+        onClick={() => onClickResult(place)}
         w="100%"
         boxShadow="md"
         rounded={'base'}
         p="12px"
         bgColor={'white'}
         transition="0.3s all"
+        _hover={{ transform: 'scale(1.05, 1.05)' }}
       >
         <Flex flexDir={'column'} w="100%">
           <Flex

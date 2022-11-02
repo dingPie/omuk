@@ -1,6 +1,6 @@
 {
-  "name": "Toktokhan.dev",
-  "short_name": "TOKDEV",
+  "name": "오늘 뭐먹지",
+  "short_name": "OMUK",
   "icons": [
     {
       "src": "/icons/192.png",

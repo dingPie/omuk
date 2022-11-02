@@ -116,6 +116,7 @@ const useKakaoMap = ({
     clustererRef.current.clear();
     infoRef.current.close();
     onOpen();
+
     const timeout = setTimeout(() => {
       // 키워드 검색 완료 시 호출되는 콜백함수 입니다
       const placesSearchCB = (
@@ -186,10 +187,9 @@ export default useKakaoMap;
 
 // 내 위치 호출 후 지도에 표시하는 함수
 const setMyLocation = (map: any, coord: CoordType) => {
-  const imageSrc =
-    'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'; // 마커이미지의 주소입니다
+  const imageSrc = '/images/my_location.png'; // 마커이미지의 주소입니다
   const imageSize = new window.kakao.maps.Size(40, 40); // 마커이미지의 크기입니다
-  const imageOption = { offset: new window.kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+  const imageOption = { offset: new window.kakao.maps.Point(20, 40) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
 
   const markerImage = new window.kakao.maps.MarkerImage(
     imageSrc,

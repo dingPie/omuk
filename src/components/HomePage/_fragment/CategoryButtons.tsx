@@ -31,7 +31,7 @@ const CategoryButtons = ({
       <Text textStyle={'lg'} fontWeight="bold">
         카테고리
       </Text>
-      <Flex overflowX="scroll" gap={'1rem'} p="1rem 0">
+      <Flex overflowX="scroll" gap={'1rem'}>
         {categoryList.map((category) => (
           <CategoryButton
             key={category.name}

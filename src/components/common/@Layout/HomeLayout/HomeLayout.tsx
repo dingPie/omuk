@@ -25,7 +25,7 @@ const HomeLayout = ({
       {header}
       <Container
         pt={LAYOUT.HEADER.HEIGHT}
-        maxW="1200px"
+        maxW="1080px"
         bgColor={'gray.100'}
         {...containerProps}
       >

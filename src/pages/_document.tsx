@@ -11,9 +11,9 @@ import { ColorModeScript } from '@chakra-ui/color-mode';
 
 import config from '@theme/foundations/config';
 
-const SITE_NAME = 'TOKTOKHAN.DEV';
-const SITE_TITLE = 'TOKTOKHAN.DEV';
-const SITE_DESCRIPTION = '디지털프로덕트의 TOKTOK한 경험';
+const SITE_NAME = 'OMUK';
+const SITE_TITLE = '오늘 뭐먹지 고민 될 때';
+const SITE_DESCRIPTION = '식당 선정까지 귀찮다면 랜덤으로 식당 선정까지';
 const SITE_IMAGE = '/images/new_og.png';
 
 // const GOOGLE_ANALYTICS_ID = 'G-입력해주세요';
@@ -67,6 +67,7 @@ class MyDocument extends Document {
           <meta property="og:title" content={SITE_TITLE} />
           <meta property="og:description" content={SITE_DESCRIPTION} />
           <meta property="og:image" content={SITE_IMAGE} />
+
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content={SITE_NAME} />
           <meta name="twitter:title" content={SITE_TITLE} />

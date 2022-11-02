@@ -5,9 +5,7 @@ import {
   BoxProps,
   Button,
   Flex,
-  Grid,
-  Show,
-  SimpleGrid,
+  Text,
   useDisclosure,
 } from '@chakra-ui/react';
 
@@ -20,8 +18,10 @@ import LocationWrapper from './_fragment/LocationWrapper';
 import OptionComponent from './_fragment/OptionCompent';
 import ResultPlace from './_fragment/ResultPlace';
 import SelectRadius from './_fragment/SelectRadius';
-import { CATEGORY_OBJECT } from './index.data';
+import { ADDRESS_KEY, CATEGORY_OBJECT } from './index.data';
 import useKakaoMap from './useKakaoMap';
+
+const SEARCH_DELAY = 1000;
 
 interface HomePageContentProps extends BoxProps {}
 
@@ -32,7 +32,7 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
   const [mapRadius, setMapRadius] = useState(500); // 200, 500, 1000, 2000, 3000
   const [categoryList, setCategoryList] = useState(CATEGORY_OBJECT);
   const [addressInput, setAddressInput] = useState('');
-  const [findValue, setFindValue] = useState('서울역');
+  const [findValue, setFindValue] = useState('');
   const [resultPlace, setResultPlace] = useState<LocationDataType[]>([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -51,8 +51,12 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
 
   const onClickOmukBtn = () => {
     if (!spots.length) return;
-    const resultPlace = getRandomItem(spots);
-    setResultPlace(resultPlace);
+    onOpen();
+    setTimeout(() => {
+      const resultPlace = getRandomItem(spots);
+      setResultPlace(resultPlace);
+      onClose();
+    }, 1000);
   };
 
   const onClickCategoryBtn = (name: string) => {
@@ -72,20 +76,14 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
     setMapRadius(Number(e.target.value));
   };
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setAddressInput(findValue);
-    }, 500);
-    // 로딩 표시
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [findValue]);
-
-  // 현재 좌표 불러와서 input창에 세팅해주는 함수
+  const onClickResult = (place: LocationDataType) => {
+    openInfoContent(place);
+    const mapPosition = mapRef.current?.offsetTop;
+    console.log(mapPosition);
+    window.scrollTo({ top: mapPosition, left: 0, behavior: 'smooth' });
+  };
 
   const getGeocodeToAddress = async () => {
-    // 내 위치 호출
     onOpen();
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const { longitude, latitude } = pos.coords;
@@ -102,9 +100,28 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
     });
   };
 
+  // find value 값이 바뀔떄마다
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setAddressInput(findValue);
+    }, SEARCH_DELAY);
+    // 로딩 표시
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [findValue]);
+
+  // 첫 mount시, 로컬스토리지에 저장된 주소 설정
+  useEffect(() => {
+    if (!addressInput.length) return;
+    localStorage.setItem(ADDRESS_KEY, addressInput);
+  }, [addressInput]);
+
   // locaStorage 에 저장된 내 주소 가져오기
   useEffect(() => {
-    // locaStorage에 저장된 내 위치(마지막 위치 or 목록 정보 가져오기)
+    const address = localStorage.getItem(ADDRESS_KEY);
+    setAddressInput(address || '서울역');
+    setFindValue(address || '서울역');
   }, [onClose, onOpen]);
 
   return (
@@ -112,10 +129,7 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
       <Box {...basisProps}>
         <Banner onClickOmukBtn={onClickOmukBtn} />
 
-        <ResultPlace
-          resultPlace={resultPlace}
-          openInfoContent={openInfoContent}
-        />
+        <ResultPlace resultPlace={resultPlace} onClickResult={onClickResult} />
 
         <Flex flexDir={'column'} gap="24px" padding="0 .5rem">
           {/* 지도에 맞게 잘 펴지긴 하는데, 지도 구역을 잘 못받아오네 */}
@@ -157,6 +171,16 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
           >
             <Box ref={mapRef} w={size} h={size} />
           </Flex>
+
+          <Box my="1rem">
+            <Text textStyle={'lg'} fontWeight="700" mb="8px">
+              안내
+            </Text>
+            <Text> * 위치 정보는 사용자 브라우저에 저장됩니다</Text>
+            <Text>
+              ** 각 카테고리별 현재 위치에서 가까운 45개의 매장이 표시됩니다.
+            </Text>
+          </Box>
         </Flex>
       </Box>
       <LoadingModal isOpen={isOpen} onClose={onClose} />
