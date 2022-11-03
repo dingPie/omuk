@@ -12,7 +12,7 @@ function Home() {
         <title>OMUK | 오늘 뭐먹지?</title>
         <script
           type="text/javascript"
-          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b4ac60bbe108db273adf13235b862d61&libraries=services,clusterer,drawing"
+          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.KAKAO_API_KEY}&libraries=services,clusterer,drawing`}
         ></script>
       </Head>
       <HomeLayout content={<HomePage />} />
