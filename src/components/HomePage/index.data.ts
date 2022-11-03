@@ -6,3 +6,5 @@ export const CATEGORY_OBJECT = CATEGORY_LIST.map((value) => ({
 }));
 
 export const ADDRESS_KEY = '@recent_address';
+
+export const CALL_API_COUNT = '@count';

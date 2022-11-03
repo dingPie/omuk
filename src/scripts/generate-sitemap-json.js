@@ -12,8 +12,8 @@ const FORBIDDEN = ['/signup', '/login'].map((route) => `!**${route}`);
    */
   const localFiles = await globby([
     'src/pages/**/*.{js,tsx}',
-    '!src/pages/_*.{js,tsx}',
-    '!src/pages/**/[*.{js,tsx}',
+    'src/pages/_*.{js,tsx}',
+    'src/pages/**/[*.{js,tsx}',
     '!src/pages/api',
     ...FORBIDDEN,
   ]);

@@ -1,8 +1,21 @@
-import { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { clearScreenDown } from 'readline';
 
 import { Box } from '@chakra-ui/react';
+
+import useAppToast from '@hooks/useAppToast';
+
+import infoContent from './_fragment/infoContent';
+import { getCount, setCount } from './function';
+import { CALL_API_COUNT } from './index.data';
 
 declare global {
   interface Window {
@@ -46,79 +59,41 @@ const useKakaoMap = ({
   const infoRef = useRef<any>(null);
   const clustererRef = useRef<any>(null);
 
-  // 각 Ref 지정
-  useEffect(() => {
-    onOpen();
-    const options = {
-      center: new window.kakao.maps.LatLng(coord.lat, coord.lng), //지도의 중심좌표.
-      level: 4,
-      scrollwheel: false,
-    };
-    kakaoMapRef.current = new window.kakao.maps.Map(mapRef.current, options);
-    placeRef.current = new window.kakao.maps.services.Places(
-      kakaoMapRef.current,
-    );
-    infoRef.current = new window.kakao.maps.InfoWindow({
-      zIndex: 3,
-      removable: true,
-    });
+  const { toastUi } = useAppToast();
 
-    // 지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가한다.
-    const zoomControl = new window.kakao.maps.ZoomControl();
-    kakaoMapRef.current.addControl(
-      zoomControl,
-      window.kakao.maps.ControlPosition.RIGHT,
-    );
-
-    clustererRef.current = new window.kakao.maps.MarkerClusterer({
-      map: kakaoMapRef.current,
-      gridSize: 35,
-      averageCenter: true,
-      minLevel: 6,
-      disableClickZoom: true,
-      styles: [
-        {
-          width: '53px',
-          height: '52px',
-          background: 'url(cluster.png) no-repeat',
-          color: '#fff',
-          textAlign: 'center',
-          lineHeight: '54px',
-        },
-      ],
-    });
-    onClose();
-  }, [coord.lat, coord.lng, mapRadius, mapRef]);
-
-  // 주소 입력으로 좌표검색
-  useEffect(() => {
-    getCoordByAddress(placeRef.current, addressInput, setCoord);
-  }, [addressInput]);
-
-  // 내 위치 지도에 표시
-  useEffect(() => {
-    setMyLocation(kakaoMapRef.current, coord);
+  const initMap = () => {
     setSpots([]);
-  }, [coord]);
+    clustererRef.current.clear();
+    infoRef.current.close();
+  };
 
-  // 실행
-  useEffect(() => {
+  const onClickSearchBtn = useCallback(() => {
     if (
       !mapRef.current ||
       !placeRef.current ||
       !kakaoMapRef.current ||
-      !infoRef.current
+      !infoRef.current ||
+      !addressInput
     )
       return;
-    if (!addressInput) return;
+
+    const { count, state } = getCount();
+    if (state === 'BAN') {
+      toastUi('너무 많이 호출되었습니다. 내일 다시 사용해주세요!', 'error');
+      return;
+    } else if (state === 'WARN' && count % 10 === 0) {
+      toastUi(
+        `현재 ${count}번 호출되었습니다. 100번이 오늘은 더 사용이 불가능해요!`,
+        'info',
+      );
+    }
+
     // 기존 매장, 클러스터, 인포윈도우 클리어
-    setSpots([]);
-    clustererRef.current.clear();
-    infoRef.current.close();
+    initMap();
     onOpen();
+    setCount(); // 호출할때마다 setCount 1 추가
 
     const timeout = setTimeout(() => {
-      // 키워드 검색 완료 시 호출되는 콜백함수 입니다
       const placesSearchCB = (
         place: LocationDataType[],
         status: 'OK' | string,
@@ -163,12 +138,23 @@ const useKakaoMap = ({
       categoryArr.forEach((category) => {
         placeRef.current.keywordSearch(category, placesSearchCB, searchOption);
       });
+
       onClose();
-    }, 200);
+    }, 500);
 
     return () => clearTimeout(timeout);
-  }, [coord, categoryList, mapRadius, mapRef, addressInput]);
+  }, [
+    addressInput,
+    categoryList,
+    coord,
+    mapRadius,
+    mapRef,
+    onClose,
+    onOpen,
+    toastUi,
+  ]);
 
+  // 인포윈도우 열기
   const openInfoContent = (place: LocationDataType) => {
     const marker = new window.kakao.maps.Marker({
       map: kakaoMapRef.current,
@@ -180,7 +166,63 @@ const useKakaoMap = ({
     infoRef.current.open(kakaoMapRef.current, marker);
   };
 
-  return { spots, openInfoContent };
+  // 각 Ref 지정
+  useEffect(() => {
+    onOpen();
+    const options = {
+      center: new window.kakao.maps.LatLng(coord.lat, coord.lng), //지도의 중심좌표.
+      level: 4,
+      scrollwheel: false,
+    };
+    kakaoMapRef.current = new window.kakao.maps.Map(mapRef.current, options);
+    placeRef.current = new window.kakao.maps.services.Places(
+      kakaoMapRef.current,
+    );
+    infoRef.current = new window.kakao.maps.InfoWindow({
+      zIndex: 3,
+      removable: true,
+    });
+
+    // 지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가한다.
+    const zoomControl = new window.kakao.maps.ZoomControl();
+    kakaoMapRef.current.addControl(
+      zoomControl,
+      window.kakao.maps.ControlPosition.RIGHT,
+    );
+
+    clustererRef.current = new window.kakao.maps.MarkerClusterer({
+      map: kakaoMapRef.current,
+      gridSize: 35,
+      averageCenter: true,
+      minLevel: 6,
+      disableClickZoom: true,
+      styles: [
+        {
+          width: '53px',
+          height: '52px',
+          background: 'url(cluster.png) no-repeat',
+          color: '#fff',
+          textAlign: 'center',
+          lineHeight: '54px',
+        },
+      ],
+    });
+    onClose();
+  }, [coord, mapRadius, mapRef, onClose, onOpen]);
+
+  // 주소 입력으로 좌표검색
+  useEffect(() => {
+    getCoordByAddress(placeRef.current, addressInput, setCoord);
+    setCount();
+  }, [addressInput]);
+
+  // 내 위치 지도에 표시
+  useEffect(() => {
+    setMyLocation(kakaoMapRef.current, coord);
+    setSpots([]);
+  }, [coord]);
+
+  return { spots, openInfoContent, onClickSearchBtn };
 };
 
 export default useKakaoMap;
@@ -238,37 +280,3 @@ const getDeduplicationArray = (arr: any[]) =>
     (arr, index, callback) =>
       index === callback.findIndex((t) => t.id === arr.id),
   );
-
-// 카테고리 필터
-const getFilteredSpots = (
-  spots: LocationDataType[],
-  categoryList: { name: string; state: boolean }[],
-) => {
-  let result: LocationDataType[] = spots;
-  categoryList.forEach((category) => {
-    if (category.state) {
-      result = result.filter((spot) =>
-        spot.category_name.includes(category.name),
-      );
-    }
-  });
-  return result;
-};
-
-const infoContent = (place: LocationDataType) =>
-  `    <div class="info" style="display:flex; flex-direction:column; width:100%; min-width: 300px; height:auto; padding:12px; margin: 0px; border-color:white; ">` +
-  `        <div style="display:flex; gap:12px; padding:4px; margin-bottom:4px; border-bottom:1px lightgray solid; justify-content:space-between;">` +
-  `           <p style="font-weight:700" class="fontLg" >` +
-  `            ${place.place_name}` +
-  `           </p>` +
-  `        </div>` +
-  `        <div class="body">` +
-  `            <div style="display:flex; flex-direction:column; gap:4px; ">` +
-  `                <p class="fontSm">${place.address_name}</p>` +
-  `                <p class="fontSm">내 위치에서 
-                  <span style="font-weight:700" > ${place.distance} m </span>
-                 </p>` +
-  `            </div>` +
-  `            <p class="fontSm">${place.phone}</p>` +
-  `        </div>` +
-  `    </div>`;

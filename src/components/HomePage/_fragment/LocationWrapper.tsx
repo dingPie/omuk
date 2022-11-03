@@ -3,16 +3,19 @@ import { ChangeEvent } from 'react';
 import { Button, Flex, IconButton, Input, Show, Text } from '@chakra-ui/react';
 
 import LocationDotIcon from '@components/common/@Icons/System/LocationDot';
+import SearchIcon from '@components/common/@Icons/System/Search';
 import SquarePlusIcon from '@components/common/@Icons/System/SquarePlus';
 
 const LocationWrapper = ({
   findValue,
   onChangeAddressInput,
   getGeocodeToAddress,
+  onClickSearchBtn,
 }: {
   findValue: string;
   onChangeAddressInput: (e: ChangeEvent<HTMLInputElement>) => void;
   getGeocodeToAddress: () => void;
+  onClickSearchBtn: () => void;
 }) => {
   return (
     <Flex
@@ -30,13 +33,8 @@ const LocationWrapper = ({
           icon={<LocationDotIcon boxSize={'24px'} />}
         />
       </Show>
-
       <Show above="sm">
-        <Button
-          onClick={getGeocodeToAddress}
-          gap="12px"
-          colorScheme={'whiteAlpha'}
-        >
+        <Button onClick={getGeocodeToAddress} gap="12px">
           <LocationDotIcon boxSize={'24px'} />
           <Text textStyle={'md'} color="black">
             내 위치
@@ -50,10 +48,23 @@ const LocationWrapper = ({
         variant="unstyled"
         p="1rem"
       />
-      <IconButton
-        aria-label={'button'}
-        icon={<SquarePlusIcon boxSize={'24px'} textAlign="center" />}
-      />
+
+      <Show above="sm">
+        <Button onClick={onClickSearchBtn} gap="12px">
+          <SearchIcon boxSize={'24px'} color="black" textAlign="center" />
+          <Text textStyle={'md'} color="black">
+            주변 식당
+          </Text>
+        </Button>
+      </Show>
+
+      <Show below="sm">
+        <IconButton
+          onClick={onClickSearchBtn}
+          aria-label={'button'}
+          icon={<SearchIcon boxSize={'24px'} textAlign="center" />}
+        />
+      </Show>
     </Flex>
   );
 };

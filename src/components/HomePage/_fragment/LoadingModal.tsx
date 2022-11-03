@@ -1,12 +1,10 @@
 import {
-  Box,
   Flex,
   Modal,
   ModalBody,
   ModalContent,
-  ModalHeader,
   ModalOverlay,
-  Spinner,
+  Text,
   keyframes,
 } from '@chakra-ui/react';
 
@@ -24,7 +22,12 @@ const LoadingModal = ({ isOpen, onClose }: LoadingModalProps) => {
       <ModalOverlay />
       <ModalContent>
         <ModalBody>
-          <Flex position={'relative'} h="240px">
+          <Flex
+            position={'relative'}
+            h="200px"
+            justifyContent={'center'}
+            alignItems="center"
+          >
             {/* <LocationPersonIcon
               position={'absolute'}
               left="50%"
@@ -32,6 +35,20 @@ const LoadingModal = ({ isOpen, onClose }: LoadingModalProps) => {
               transform={'translate3d(-50%,-50%,0)'}
               boxSize="40px"
             /> */}
+            <Text textStyle={'xl'} fontWeight="700">
+              로딩중
+            </Text>
+            {DOT_ARRAY.map((fadeIn, idx) => (
+              <Text
+                key={idx}
+                textStyle={'xl'}
+                fontWeight="700"
+                animation={`${fadeIn} 1.5s infinite`}
+              >
+                .
+              </Text>
+            ))}
+
             {ICON_ARRAY.map((data, idx) => (
               <LocationDotIcon
                 key={data.left + idx}
@@ -52,12 +69,38 @@ const LoadingModal = ({ isOpen, onClose }: LoadingModalProps) => {
 
 export default LoadingModal;
 
+const fadeIn1 = keyframes`
+  0% {
+    transform: scale(0, 0);
+  } 
+  50% {
+    transform: scale(1, 1);
+  }
+`;
+const fadeIn2 = keyframes`
+  25% {
+    transform: scale(0, 0);
+  } 
+  75% {
+    transform: scale(1, 1);
+  }
+`;
+const fadeIn3 = keyframes`
+  50% {
+    transform: scale(0, 0);
+  } 
+  100% {
+    transform: scale(1, 1);
+  }
+`;
+const DOT_ARRAY = [fadeIn1, fadeIn2, fadeIn3];
+
 const popup1 = keyframes`
   0% {
     transform: scale(0, 0);
   }
-  40% {
-    transform: scale(1.2, 1.2);
+  30% {
+    transform: scale(1.3, 1.3);
   }
   50% {
     transform: scale(1, 1);
@@ -68,8 +111,8 @@ const popup2 = keyframes`
   25% {
     transform: scale(0, 0);
   }
-  65% {
-    transform: scale(1.2, 1.2);
+  55% {
+    transform: scale(1.3, 1.3);
   }
   75% {
     transform: scale(1, 1);
@@ -80,8 +123,8 @@ const popup3 = keyframes`
   50% {
     transform: scale(0, 0);
   }
-  90% {
-    transform: scale(1.2, 1.2);
+  80% {
+    transform: scale(1.3, 1.3);
   }
   100% {
     transform: scale(1, 1);
@@ -92,19 +135,19 @@ const ICON_ARRAY = [
   {
     color: 'red.200',
     left: '10%',
-    top: '25%',
+    top: '15%',
     animation: popup1,
   },
   {
     color: 'green.200',
     left: '40%',
-    top: '75%',
+    top: '65%',
     animation: popup2,
   },
   {
     color: 'yellow.200',
-    left: '70%',
-    top: '55%',
+    left: '80%',
+    top: '45%',
     animation: popup3,
   },
 ];
