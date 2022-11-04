@@ -13,8 +13,8 @@ import config from '@theme/foundations/config';
 
 const SITE_NAME = 'OMUK';
 const SITE_TITLE = '오늘 뭐먹지 고민 될 때';
-const SITE_DESCRIPTION = '식당 선정까지 귀찮다면 랜덤으로 식당 선정까지';
-const SITE_IMAGE = '/images/new_og.png';
+const SITE_DESCRIPTION = '내 주변 식당 선정까지!';
+const SITE_IMAGE = '/images/site-image.png';
 
 // const GOOGLE_ANALYTICS_ID = 'G-입력해주세요';
 
@@ -133,7 +133,6 @@ class MyDocument extends Document {
           <meta name="theme-color" content="#ffffff" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
 
-          <link rel="canonical" href="https://www.toktokhan.dev/" />
           <meta name="description" content={SITE_DESCRIPTION} />
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content={SITE_NAME} />
