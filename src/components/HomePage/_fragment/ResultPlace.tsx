@@ -7,7 +7,7 @@ interface ResultPlaceProps {
 
 const ResultPlace = ({ resultPlace, onClickResult }: ResultPlaceProps) => {
   return (
-    <Flex flexDir={'column'} gap="1rem" marginY="1rem">
+    <Flex flexDir={'column'} gap="1rem">
       <Text marginX={'12px'} textStyle={'xl'} fontWeight="bold" w="100%">
         오늘의 식당
       </Text>

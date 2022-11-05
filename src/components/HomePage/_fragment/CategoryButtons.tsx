@@ -64,7 +64,7 @@ const CategoryButton = ({
       textStyle="md"
       fontWeight={'bold'}
       bgColor={selected ? 'gray.300' : 'gray.100'}
-      padding=".75rem 2rem"
+      padding=".5rem 2rem"
       borderRadius={'4px'}
       boxShadow={selected ? 'inset 0px 0px 10px #ccc' : '0px 0px 10px #ccc'}
     >

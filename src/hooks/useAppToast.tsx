@@ -6,14 +6,10 @@ const useAppToast = () => {
   const toast = useToast();
   const toastIdRef = useRef<ToastId>();
 
-  const toastUi = (
-    title: string,
-    status: 'success' | 'error' | 'warning' | 'info',
-    props?: UseToastOptions,
-  ) => {
+  const toastUi = ({ ...props }: UseToastOptions) => {
     toastIdRef.current = toast({
-      title: title,
-      status: status,
+      title: props.title,
+      status: props.status,
       position: 'bottom-right',
       duration: 3000,
       isClosable: true,

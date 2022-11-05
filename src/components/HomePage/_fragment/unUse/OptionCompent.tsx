@@ -9,7 +9,7 @@ import {
   Box,
 } from '@chakra-ui/react';
 
-import CategoryButtons from './CategoryButtons';
+import CategoryButtons from '../CategoryButtons';
 import SelectRadius from './SelectRadius';
 
 interface OptionComponentProps {

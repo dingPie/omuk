@@ -24,7 +24,7 @@ const HomeHeader = () => {
         transition="all 0.3s"
         w="100%"
         h={LAYOUT.HEADER.HEIGHT}
-        // borderBottom="1px lightgray solid"
+        borderBottom="1px lightgray solid"
         bgColor={'gray.100'}
       >
         <Text textStyle={'title'}>OMUK</Text>
