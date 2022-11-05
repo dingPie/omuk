@@ -6,16 +6,13 @@ interface BannerProps {
 
 const Banner = ({ onClickOmukBtn }: BannerProps) => {
   return (
-    <VStack marginY="32px" gap={'12px'}>
-      {/* <Text textStyle={'title'} whiteSpace="break-spaces" textAlign={'center'}>
-        오늘 뭐먹지?
-      </Text> */}
+    <VStack gap={'12px'} my=".5rem">
       <Button
         onClick={onClickOmukBtn}
         w="100%"
-        maxW="480px"
-        h={{ base: '72px', sm: '88px' }}
-        fontSize={['28px', '32px']}
+        // maxW="480px"
+        h={{ base: '72px', sm: '120px' }}
+        fontSize={{ base: '24px', sm: '42px' }}
         fontWeight="bold"
         boxShadow="xl"
         rounded="md"

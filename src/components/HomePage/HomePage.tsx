@@ -18,12 +18,16 @@ import CategoryButtons from './_fragment/CategoryButtons';
 import LoadingModal from './_fragment/LoadingModal';
 import LocationWrapper from './_fragment/LocationWrapper';
 import MenualModal from './_fragment/MenualModal';
-import OptionComponent from './_fragment/OptionCompent';
 import ResultPlace from './_fragment/ResultPlace';
-import SelectRadius from './_fragment/SelectRadius';
-import { getCount } from './function';
-import { ADDRESS_KEY, CALL_API_COUNT, CATEGORY_OBJECT } from './index.data';
+import OptionComponent from './_fragment/unUse/OptionCompent';
+import SelectRadius from './_fragment/unUse/SelectRadius';
 import useKakaoMap from './useKakaoMap';
+import { getCount } from './util/function';
+import {
+  ADDRESS_KEY,
+  CALL_API_COUNT,
+  CATEGORY_OBJECT,
+} from './util/index.data';
 
 const SEARCH_DELAY = 1000;
 
@@ -38,6 +42,8 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
   const [addressInput, setAddressInput] = useState('');
   const [findValue, setFindValue] = useState('');
   const [resultPlace, setResultPlace] = useState<LocationDataType[]>([]);
+
+  const { toastUi } = useAppToast();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -60,13 +66,15 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
   // 버튼 누르면 장소중 세개 표시
 
   const onClickOmukBtn = () => {
-    if (!spots.length) return;
+    if (!spots.length) {
+      toastUi({ title: '먼저 주변 매장을 받아와주세요!', status: 'info' });
+    }
     onOpen();
     setTimeout(() => {
       const resultPlace = getRandomItem(spots);
       setResultPlace(resultPlace);
       onClose();
-    }, 1000);
+    }, 500);
   };
 
   const onClickCategoryBtn = (name: string) => {
@@ -85,15 +93,19 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
   const onClickResult = (place: LocationDataType) => {
     openInfoContent(place);
     const mapPosition = mapRef.current?.offsetTop;
-    console.log(mapPosition);
     window.scrollTo({ top: mapPosition, left: 0, behavior: 'smooth' });
   };
 
-  const getGeocodeToAddress = async () => {
+  const onClickGetMyLocation = () => {
     onOpen();
-    navigator.geolocation.getCurrentPosition(async (pos) => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => getGeocodeToAddress(pos),
+      () => toastUi({ title: '위치 허용이 필요합니다!', status: 'error' }),
+    );
+    onClose();
+
+    const getGeocodeToAddress = async (pos: GeolocationPosition) => {
       const { longitude, latitude } = pos.coords;
-      // 내 위치(좌표) -> 주소 리버스 지오코드 실행
       const geocoder = new window.kakao.maps.services.Geocoder();
       await geocoder.coord2Address(
         longitude,
@@ -102,8 +114,7 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
           setFindValue(data[0].address.address_name);
         },
       );
-      onClose();
-    });
+    };
   };
 
   // find value 값이 바뀔떄마다 지도를 검색해준다.
@@ -134,67 +145,57 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
 
   return (
     <>
-      <Box {...basisProps}>
+      <Flex flexDir={'column'} gap="24px" py="1rem">
+        {/* 지도에 맞게 잘 펴지긴 하는데, 지도 구역을 잘 못받아오네 */}
         <Banner onClickOmukBtn={onClickOmukBtn} />
 
-        <ResultPlace resultPlace={resultPlace} onClickResult={onClickResult} />
+        <Flex flexDir={'column'}>
+          <LocationWrapper
+            findValue={findValue}
+            onChangeAddressInput={onChangeAddressInput}
+            onClickGetMyLocation={onClickGetMyLocation}
+            onClickSearchBtn={onClickSearchBtn}
+          />
 
-        <Flex flexDir={'column'} gap="24px" padding="0 .5rem">
-          {/* 지도에 맞게 잘 펴지긴 하는데, 지도 구역을 잘 못받아오네 */}
-
-          <Flex flexDir={'column'}>
-            <LocationWrapper
-              findValue={findValue}
-              onChangeAddressInput={onChangeAddressInput}
-              getGeocodeToAddress={getGeocodeToAddress}
-              onClickSearchBtn={onClickSearchBtn}
-            />
-
-            <CategoryButtons
-              categoryList={categoryList}
-              onClickCategoryBtn={onClickCategoryBtn}
-            />
-            {/* 초기 기획과 달라져서 현재 사용하지 못하는 부분 */}
-            {/* <Show below={'sm'}>
+          <CategoryButtons
+            categoryList={categoryList}
+            onClickCategoryBtn={onClickCategoryBtn}
+          />
+          {/* 초기 기획과 달라져서 현재 사용하지 못하는 부분 */}
+          {/* <Show below={'sm'}>
             <OptionComponent
-              onChangeMapRadius={onChangeMapRadius}
-              categoryList={categoryList}
-              onClickCategoryBtn={onClickCategoryBtn}
+            onChangeMapRadius={onChangeMapRadius}
+            categoryList={categoryList}
+            onClickCategoryBtn={onClickCategoryBtn}
             />
-          </Show>
-          <Show above={'sm'}>
+            </Show>
+            <Show above={'sm'}>
             <SelectRadius onChangeMapRadius={onChangeMapRadius} />
             <CategoryButtons
-              categoryList={categoryList}
-              onClickCategoryBtn={onClickCategoryBtn}
+            categoryList={categoryList}
+            onClickCategoryBtn={onClickCategoryBtn}
             />
           </Show> */}
-          </Flex>
-
-          <Flex
-            flexDir={{ base: 'column', sm: 'row' }}
-            ref={boxRef}
-            w="100%"
-            h="auto"
-            bgColor={'red.300'}
-          >
-            <Box ref={mapRef} w={size} h={size} />
-          </Flex>
-
-          <Box marginY="1rem">
-            <Flex justifyContent="space-between">
-              <Text textStyle={'lg'} fontWeight="700" mb="8px">
-                안내
-              </Text>
-              <Button onClick={onOpenMenual}>매뉴얼 다시보기</Button>
-            </Flex>
-            <Text> * 위치 정보는 사용자 브라우저에 저장됩니다</Text>
-            <Text>
-              ** 각 카테고리별 현재 위치에서 가까운 45개의 매장이 표시됩니다.
-            </Text>
-          </Box>
         </Flex>
-      </Box>
+        <ResultPlace resultPlace={resultPlace} onClickResult={onClickResult} />
+
+        <Flex ref={boxRef} w="100%" h="auto" bgColor={'red.300'}>
+          <Box ref={mapRef} w={size} h={size} />
+        </Flex>
+
+        <Box marginY="1rem">
+          <Flex justifyContent="space-between">
+            <Text textStyle={'lg'} fontWeight="700" mb="8px">
+              안내
+            </Text>
+            <Button onClick={onOpenMenual}>매뉴얼 다시보기</Button>
+          </Flex>
+          <Text> * 위치 정보는 사용자 브라우저에 저장됩니다</Text>
+          <Text>
+            ** 각 카테고리별 현재 위치에서 가까운 45개의 매장이 표시됩니다.
+          </Text>
+        </Box>
+      </Flex>
 
       <LoadingModal isOpen={isOpen} onClose={onClose} />
       <MenualModal isOpen={isOpenMenual} onClose={onCloseMenual} />

@@ -9,13 +9,13 @@ import {
 
 import { clearScreenDown } from 'readline';
 
-import { Box } from '@chakra-ui/react';
+import { Box, UseToastOptions } from '@chakra-ui/react';
 
 import useAppToast from '@hooks/useAppToast';
 
 import infoContent from './_fragment/infoContent';
-import { getCount, setCount } from './function';
-import { CALL_API_COUNT } from './index.data';
+import { getCount, setCount } from './util/function';
+import { CALL_API_COUNT } from './util/index.data';
 
 declare global {
   interface Window {
@@ -79,13 +79,16 @@ const useKakaoMap = ({
 
     const { count, state } = getCount();
     if (state === 'BAN') {
-      toastUi('너무 많이 호출되었습니다. 내일 다시 사용해주세요!', 'error');
+      toastUi({
+        title: '너무 많이 호출되었습니다. 내일 다시 사용해주세요!',
+        status: 'error',
+      });
       return;
     } else if (state === 'WARN' && count % 10 === 0) {
-      toastUi(
-        `현재 ${count}번 호출되었습니다. 100번이 오늘은 더 사용이 불가능해요!`,
-        'info',
-      );
+      toastUi({
+        title: `현재 ${count}번 호출되었습니다. 100번이 오늘은 더 사용이 불가능해요!`,
+        status: 'info',
+      });
     }
 
     // 기존 매장, 클러스터, 인포윈도우 클리어
@@ -212,7 +215,7 @@ const useKakaoMap = ({
 
   // 주소 입력으로 좌표검색
   useEffect(() => {
-    getCoordByAddress(placeRef.current, addressInput, setCoord);
+    getCoordByAddress(placeRef.current, addressInput, setCoord, toastUi);
     setCount();
   }, [addressInput]);
 
@@ -255,22 +258,30 @@ const getCoordByAddress = (
   ps: any,
   addressInput: string,
   update: (value: any) => void,
+  toastUi: ({ ...props }: UseToastOptions) => void,
 ) => {
+  if (!addressInput.length) return;
   const geocoder = new window.kakao.maps.services.Geocoder();
+  // 1. 주소검색
   geocoder.addressSearch(
     addressInput,
     (data: LoadAddressDataType[], status: string) => {
       if (status === 'OK') {
         update({ lat: Number(data[0].y), lng: Number(data[0].x) });
-        return;
+      } else {
+        // 2. 키워드 검색
+        ps.keywordSearch(
+          addressInput,
+          (data: LoadAddressDataType[], status: string) => {
+            if (status === 'OK') {
+              update({ lat: Number(data[0].y), lng: Number(data[0].x) });
+            } else {
+              // 3. 둘다 없으면 안내
+              toastUi({ title: '결과가 없습니다', status: 'info' });
+            }
+          },
+        );
       }
-    },
-  );
-  ps.keywordSearch(
-    addressInput,
-    (data: LoadAddressDataType[], status: string) => {
-      if (status === 'OK')
-        update({ lat: Number(data[0].y), lng: Number(data[0].x) });
     },
   );
 };
