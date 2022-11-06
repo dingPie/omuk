@@ -68,6 +68,7 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
   const onClickOmukBtn = () => {
     if (!spots.length) {
       toastUi({ title: '먼저 주변 매장을 받아와주세요!', status: 'info' });
+      return;
     }
     onOpen();
     setTimeout(() => {
