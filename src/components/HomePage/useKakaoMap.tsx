@@ -187,11 +187,11 @@ const useKakaoMap = ({
     });
 
     // 지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가한다.
-    const zoomControl = new window.kakao.maps.ZoomControl();
-    kakaoMapRef.current.addControl(
-      zoomControl,
-      window.kakao.maps.ControlPosition.RIGHT,
-    );
+    // const zoomControl = new window.kakao.maps.ZoomControl();
+    // kakaoMapRef.current.addControl(
+    //   zoomControl,
+    //   window.kakao.maps.ControlPosition.RIGHT,
+    // );
 
     clustererRef.current = new window.kakao.maps.MarkerClusterer({
       map: kakaoMapRef.current,
