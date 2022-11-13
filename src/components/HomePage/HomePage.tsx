@@ -1,5 +1,7 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 
+import { map } from 'lodash';
+
 import {
   Box,
   BoxProps,
@@ -137,7 +139,7 @@ function HomePageContent({ ...basisProps }: HomePageContentProps) {
   // locaStorage 에 저장된 내 주소, api 호출 횟수 가져오기
   useEffect(() => {
     const { count } = getCount();
-    console.log(count);
+    console.log('호출횟수', count);
     if (count < 1) onOpenMenual();
     const address = localStorage.getItem(ADDRESS_KEY);
     setAddressInput(address || '서울역');
