@@ -12,8 +12,8 @@ import { ColorModeScript } from '@chakra-ui/color-mode';
 import config from '@theme/foundations/config';
 
 const SITE_NAME = 'OMUK';
-const SITE_TITLE = '오늘 뭐먹지 고민 될 때';
-const SITE_DESCRIPTION = '내 주변 식당 선정까지!';
+const SITE_TITLE = '오늘 뭐 먹지? 고민될 땐 OMUK!';
+const SITE_DESCRIPTION = '내 주변 맛집 추천 서비스';
 const SITE_IMAGE = '/images/site-image.png';
 
 // const GOOGLE_ANALYTICS_ID = 'G-입력해주세요';
