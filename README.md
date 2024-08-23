@@ -10,7 +10,7 @@ https://omuk.vercel.app/
 
 <br />
 
-### Trobule
+### Trouble
 - Next.js 환경에서 SSR 문제로 kakao api 불러오기 문제 (해결)
 - 카카오 장소 API 기반 주변 상권 갯수 및 이미지 등 한계
 
